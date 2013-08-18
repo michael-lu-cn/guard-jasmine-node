@@ -40,15 +40,16 @@ module Guard
                     changed_paths
                   end.uniq
 
-      run(run_paths)
-      notify(:some)
+                  puts "#{failing_paths}########{changed_paths}##################{run_paths}"
+                  run(run_paths)
+                  notify(:some)
 
-      run_all if passing? and options[:all_after_pass]
+                  #run_all if passing? and options[:all_after_pass]
     end
 
     def failing_paths
       @state.failing_paths
-     end
+    end
 
     def passing?
       @state.passing?
@@ -66,16 +67,21 @@ module Guard
 
     def notify(scope = :all)
       return unless options[:notify]
-      
-      message = if passing?
-                  if fixed?
-                    scope == :all ? "All fixed" : "Specs fixed"
-                  else
-                    scope == :all ? "All specs pass" : "Specs pass"
-                  end
-                else
-                  "Some specs failing"
-                end
+
+      #  message = if passing?
+      #            if fixed?
+      #                scope == :all ? "All fixed" : "Specs fixed"
+      #              else
+      #                scope == :all ? "All specs pass" : "Specs pass"
+      #              end
+      #            else
+      #              "Some specs failing"
+      #            end
+      #message = @state.result_info
+      message = @state.result_info
+      #the message has some unvisible bytes,5 in fact
+      message = message[5..message.length-1]
+      #message = '12 tests, 19 assertions, 1 failure, 0 skipped'
       image = passing? ? :success : :failed
       ::Guard::Notifier.notify(message, :image => image, :title => "jasmine-node")
     end
